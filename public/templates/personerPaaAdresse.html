@@ -1,0 +1,6 @@
+<h1>Personer boende på {{personAdresse.adresse.adressenavn}}</h1>
+<ul>
+    <li ng-repeat="person in personAdresse.personer">
+        Navn: {{person.navn}}, Fdato: {{person.fodselsdato | date: 'dd-MM-yyyy'}}, Info: {{person.info}}
+    </li>
+</ul>

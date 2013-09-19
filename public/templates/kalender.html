@@ -1,0 +1,15 @@
+<div class="col-lg-6">
+  <h2>Velg type her:</h2>
+  <div class="btn-group">
+    <button data-ng-repeat="skifttype in skifttyper.alternativer" type="button" class="btn btn-default" ng-click="skifttyper.valgt=skifttype.id" ng-class="{active:skifttype.id==skifttyper.valgt}">{{skifttype.navn}}</button>
+  </div>
+</div>
+<div class="col-lg-6">
+  <h2>Overfør til Google Calendar</h2>
+    <button type="button" class="btn btn-primary" ng-click="syncWithGoogleCalendar()" ng-show="authorized">Synkroniser</button>
+    <button type="button" class="btn btn-primary" ng-click="handleAuthClick()" id="authorize-button" ng-hide="authorized">Logg inn</button>
+
+</div>
+<div class="col-lg-8">
+  <div class="pad-top-50" ui-calendar="kalenderInnstillinger" config="kalenderInnstillinger" ng-model="eventSources" />
+</div>

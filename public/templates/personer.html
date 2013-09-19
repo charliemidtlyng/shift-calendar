@@ -1,0 +1,74 @@
+<h1>Personer</h1>
+<form name="personer" ng-submit="submitPerson()" class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="navn">Navn:</label>
+        <div class="controls">
+            <input id="navn" type="text" ng-model="person.navn" required />
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="fodselsdato">Fodselsdato:</label>
+        <div class="controls">
+            <input id="fodselsdato" type="text" ng-model="person.fodselsdato" datepicker required placeholder="åååå-mm-dd" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="info">Info:</label>
+        <div class="controls">
+            <input id="info" type="text" ng-model="person.info" />
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="adresse">Adresse:</label>
+        <div class="controls">
+            <select id="adresse" ng-model="person.adresse.id" ng-options="adresse.id as adresse.adressenavn for adresse in adresseListe">
+                <option value="">Ny</option>
+            </select>
+        </div>
+    </div>
+
+    <div ng-hide="person.adresse.id">
+        <div class="control-group">
+            <label class="control-label" for="familienavn">Familienavn:</label>
+            <div class="controls">
+                <input id="familienavn" type="text" ng-model="person.adresse.familienavn" ng-required="!person.adresse.id"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="gateadresse">Gateadresse:</label>
+            <div class="controls">
+                <input id="gateadresse" type="text" ng-model="person.adresse.adressenavn" ng-required="!person.adresse.id"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="postnummer">Postnummer:</label>
+            <div class="controls">
+                <input id="postnummer" type="text" ng-model="person.adresse.postnummer" pattern=".{4}" ng-required="!person.adresse.id"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="poststed">Poststed:</label>
+            <div class="controls">
+                <input id="poststed" type="text" ng-model="person.adresse.poststed" ng-required="!person.adresse.id" />
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button ng-disabled="personer.$invalid">Lagre</button>
+        </div>
+    </div>
+
+
+
+</form>
+<ul>
+    <li ng-repeat="person in personListe">
+        Navn: {{person.navn}}, Fdato: {{person.fodselsdato | date: 'dd-MM-yyyy'}}, Info: {{person.info}} <button ng-click="slettPerson(person)">Slett</button>
+    </li>
+</ul>
