@@ -51,33 +51,58 @@ angular.module('scCalendarController', [])
             function makeApiCall() {
                 // Step 4: Load the Google+ API
                 gapi.client.load('calendar', 'v3', function() {
-                    console.log();
+                    addGoogleCalendarEvents();
+                });
+            }
+            function transformFromGC (items) {
+                var events = [];
+                _.each(items, function(item){
+                    var startTime = item.start.dateTime;
+                    var endTime = item.end.dateTime;
+                    var start = $.fullCalendar.parseISO8601(startTime, true);
+                    var end = $.fullCalendar.parseISO8601(endTime, true);
+                    events.push({
+                        id: item.iCalUID,
+                        title: item.summary,
+                        url: item.htmlLink,
+                        start: start,
+                        end: end
+                    });
+                });
+                return events;
+            }
+            function addGoogleCalendarEvents() {
+                getCalendar().then(function(calendar) {
+                    calendarScope.gcalSource = [];
+                    var req = gapi.client.calendar.events.list({calendarId: calendar.id});
+                    req.execute(function(resp){
+                        calendarScope.gcalSource = transformFromGC(resp.items);
+                        calendarScope.eventSources.push(calendarScope.gcalSource);
+                        calendarScope.$apply();
+                    });
+                    
                 });
             }
 
             // Google calendar specific
 
-            function syncEvents(calendarId) {
-
+            function syncEvents(calendar) {
+                var calendarId = calendar.id;
                 calendarScope.inProgress = calendarScope.hendelser ? calendarScope.hendelser.length : 0;
-                calendarScope.$apply();
                 _.each(calendarScope.hendelser, function(hendelse) {
                     var request = gapi.client.calendar.events.insert({
                         calendarId: calendarId,
                         resource: {
                             summary: hendelse.title,
                             start: {
-                                // date: moment(hendelse.start).format('YYYY-MM-DD'),
                                 dateTime: moment(hendelse.startTid).format('YYYY-MM-DDTHH:mm:ssZ')
                             },
                             end: {
-                                // date: moment(hendelse.slutt).format('YYYY-MM-DD'),
                                 dateTime: moment(hendelse.sluttTid).format('YYYY-MM-DDTHH:mm:ssZ')
                             }
                         }
                     });
                     request.execute(function(response) {
-                        console.log(response);
                         calendarScope.inProgress = calendarScope.inProgress - 1;
                         calendarScope.$apply();
                     });
@@ -85,7 +110,8 @@ angular.module('scCalendarController', [])
 
             }
 
-            function createCalendar(callback) {
+            function createCalendar() {
+                var deferred = $q.defer();
                 var request = gapi.client.calendar.calendars.insert({
                     resource: {
                         summary: "ShiftCalendar",
@@ -96,29 +122,45 @@ angular.module('scCalendarController', [])
                 });
 
                 request.execute(function(response) {
-                    callback(response.id);
+                    calendarScope.$apply(function() {
+                        deferred.resolve(response);
+                    });
                 });
+                return deferred.promise;
             }
 
-            function resolveCalendarId(result) {
+            function resolveOrCreateCalendar(result) {
+                var deferred = $q.defer();
+
                 var calendar = _.find(result.items, function(item) {
                     return item.summary === "ShiftCalendar";
                 });
+                if (calendar) {
+                    deferred.resolve(calendar);
+                } else {
+                    createCalendar().then(function(calendar) {
+                        deferred.resolve(calendar);
+                    });
+                }
+                return deferred.promise;
+            }
 
-                return calendar ? calendar.id : null;
+            function getCalendar() {
+                var deferred = $q.defer();
+                var request = gapi.client.calendar.calendarList.list();
+                request.execute(function(response) {
+                    calendarScope.$apply(function() {
+                        resolveOrCreateCalendar(response).then(function(calendar) {
+                            deferred.resolve(calendar);
+                        });
+                    });
+                });
+                return deferred.promise;
             }
 
             function syncWithGoogleCalendar() {
-                var request = gapi.client.calendar.calendarList.list();
-                request.execute(function(response) {
-                    var calendarId = resolveCalendarId(response);
-                    if (!calendarId) {
-                        createCalendar(syncEvents);
-                    } else {
-                        syncEvents(calendarId);
-                    }
-                });
-            };
+                getCalendar().then(syncEvents);
+            }
 
             return {
                 authorize: function(scope) {
@@ -221,9 +263,9 @@ angular.module('scCalendarController', [])
             };
 
             $scope.hendelser = [];
-            $scope.gcalSource = {
-                url: "https://www.google.com/calendar/feeds/irontvfhd710k6oips7s5glkt4%40group.calendar.google.com/private-a10f7add274d3ff32f54c870fbbd6be3/basic"
-            };
+            // $scope.gcalSource = {
+            //     url: "https://www.google.com/calendar/feeds/irontvfhd710k6oips7s5glkt4%40group.calendar.google.com/private-a10f7add274d3ff32f54c870fbbd6be3/basic"
+            // };
             $scope.eventSources = [$scope.hendelser];
         }
     ]);
