@@ -58,23 +58,31 @@ angular.module('scCalendarController', [])
             // Google calendar specific
 
             function syncEvents(calendarId) {
+
+                calendarScope.inProgress = calendarScope.hendelser ? calendarScope.hendelser.length : 0;
+                calendarScope.$apply();
                 _.each(calendarScope.hendelser, function(hendelse) {
                     var request = gapi.client.calendar.events.insert({
                         calendarId: calendarId,
                         resource: {
                             summary: hendelse.title,
                             start: {
-                                date: moment(hendelse.start).format('YYYY-MM-DD'),
-                                timezone: "GMT+1:00"
+                                // date: moment(hendelse.start).format('YYYY-MM-DD'),
+                                dateTime: moment(hendelse.startTid).format('YYYY-MM-DDTHH:mm:ssZ')
                             },
                             end: {
-                                date: moment(hendelse.start).format('YYYY-MM-DD'),
-                                timezone: "GMT+1:00"
+                                // date: moment(hendelse.slutt).format('YYYY-MM-DD'),
+                                dateTime: moment(hendelse.sluttTid).format('YYYY-MM-DDTHH:mm:ssZ')
                             }
                         }
                     });
-                    request.execute(console.log);
+                    request.execute(function(response) {
+                        console.log(response);
+                        calendarScope.inProgress = calendarScope.inProgress - 1;
+                        calendarScope.$apply();
+                    });
                 });
+
             }
 
             function createCalendar(callback) {
@@ -142,19 +150,27 @@ angular.module('scCalendarController', [])
                 alternativer: [{
                     id: 1,
                     navn: "Fri",
-                    farge: "#CCC"
+                    farge: "#CCC",
+                    startTid: '0',
+                    sluttTid: '23:59'
                 }, {
                     id: 2,
                     navn: "Dag",
-                    farge: "#33CC33"
+                    farge: "#33CC33",
+                    startTid: '07.5',
+                    sluttTid: '15.5'
                 }, {
                     id: 3,
                     navn: "Aften",
-                    farge: "#0099FF"
+                    farge: "#0099FF",
+                    startTid: '15.5',
+                    sluttTid: '22'
                 }, {
                     id: 4,
                     navn: "Natt",
-                    farge: "#000"
+                    farge: "#000",
+                    startTid: '21.5',
+                    sluttTid: '31.5'
                 }]
 
             };
@@ -168,6 +184,9 @@ angular.module('scCalendarController', [])
                     $scope.hendelser.push({
                         title: valgt.navn,
                         start: date,
+                        startTid: moment(date).add('hours', valgt.startTid),
+                        slutt: moment(date).add('hours', valgt.sluttTid),
+                        sluttTid: moment(date).add('hours', valgt.sluttTid),
                         color: valgt.farge
                     });
                 });

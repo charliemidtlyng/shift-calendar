@@ -5,9 +5,16 @@ angular.module('scRoutes', [])
             .when('/', {
                 templateUrl: 'assets/templates/kalender.html',
                 controller: 'CalendarController',
-                activetab: 'calendar' // TODO: Refactor to directive
+                activetab: 'calendar'
             })
-
+            .when('/om', {
+                templateUrl: 'assets/templates/om.html',
+                activetab: 'about'
+            })
+            .when('/kontakt', {
+                templateUrl: 'assets/templates/kontakt.html',
+                activetab: 'kontakt' // TODO: Refactor to directive
+            })
             .when('/404', { templateUrl: 'assets/templates/404.html' })
 
         .otherwise( { redirectTo: '/404' });

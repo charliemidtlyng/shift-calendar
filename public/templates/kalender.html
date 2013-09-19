@@ -8,6 +8,7 @@
   <h2>Overfør til Google Calendar</h2>
     <button type="button" class="btn btn-primary" ng-click="syncWithGoogleCalendar()" ng-show="authorized">Synkroniser</button>
     <button type="button" class="btn btn-primary" ng-click="handleAuthClick()" id="authorize-button" ng-hide="authorized">Logg inn</button>
+    <div ng-show="inProgress">Overfører {{inProgress}} hendelse(r)</div>
 
 </div>
 <div class="col-lg-8">

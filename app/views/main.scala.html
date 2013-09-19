@@ -31,7 +31,7 @@
         <script type="text/javascript" src="@routes.Assets.at("app/js/directives.js")"></script>
         <script type="text/javascript" src="@routes.Assets.at("app/js/filters.js")"></script>
 
-            <!-- app: -->
+            <!-- controllers: -->
         <script type="text/javascript" src="@routes.Assets.at("app/js/controller/CalendarController.js")"></script>
 
     </head>
@@ -51,8 +51,8 @@
         		 <div class="navbar-collapse collapse"> 
         		 	<ul class="nav navbar-nav"> 
         		 		<li class="active"><a href="#">Hjem</a></li> 
-        		 		<li><a href="#about">About</a></li>
-        		 		<li><a href="#contact">Contact</a></li>
+        		 		<li><a href="#om">Om</a></li>
+        		 		<li><a href="#kontakt">Kontakt</a></li>
         		 	</ul>
         		 </div>
         		</div>
@@ -61,69 +61,13 @@
             	<div class="row">
             		<ng-view />
             	</div>
+                <hr />
+                <footer>
+                    <div class="container">
+                        <p>Shift Calendar</p>
+                    </div>
+                </footer>
             </div>
-
-            <footer>
-                <div class="container">
-                    <p>Shift Calendar</p>
-                </div>
-            </footer>
-        </div>
-        <div class="googlesome">
-    <script type="text/javascript">
-
-      // var clientId = '821896396854-cfhqjbtc1pg26d0sf50jubdumnhouvo7.apps.googleusercontent.com';
-
-      // var apiKey = 'AIzaSyAPpJQ41xhzov5Es5udF1-EcW26bcElT3g';
-
-      // var scopes = 'https://www.googleapis.com/auth/calendar';
-
-      // function handleClientLoad() {
-      //   // Step 2: Reference the API key
-      //   gapi.client.setApiKey(apiKey);
-      //   window.setTimeout(checkAuth,1);
-      // }
-
-      // function checkAuth() {
-      //   gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
-      // }
-
-      // function handleAuthResult(authResult) {
-      //   var authorizeButton = document.getElementById('authorize-button');
-      //   if (authResult && !authResult.error) {
-      //     authorizeButton.style.visibility = 'hidden';
-      //     makeApiCall();
-      //   } else {
-      //     authorizeButton.style.visibility = '';
-      //     authorizeButton.onclick = handleAuthClick;
-      //   }
-      // }
-
-      // function handleAuthClick(event) {
-      //   // Step 3: get authorization to use private data
-      //   gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-      //   return false;
-      // }
-
-      // // Load the API and make an API call.  Display the results on the screen.
-      // function makeApiCall() {
-      //   // Step 4: Load the Google+ API
-      //   gapi.client.load('calendar', 'v3', function() {
-      //     // Step 5: Assemble the API request
-      //     // var request = gapi.client.calendar.events.list({ 
-      //     //   'calendarId': 'primary'
-      //     //   }); 
-      //     // // Step 6: Execute the API request
-      //     // request.execute(function(resp) {
-      //     //   alert("HURRA");
-      //     //   console.log(resp)
-      //     // });
-      //   console.log();
-      //   });
-      // }
-    </script>
-    <!--script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script-->
-
         </div>
     </body>
 </html>
