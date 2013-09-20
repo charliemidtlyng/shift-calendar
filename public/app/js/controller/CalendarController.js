@@ -223,13 +223,13 @@ angular.module('scCalendarController', [])
 
             };
 
-            function addEmptyInStart() {
-                // First event is not hooked up unless we do this..?
-                if ($scope.hendelser.length === 0) {
-                    $scope.hendelser.push({});
-                    $scope.$apply();
-                    $scope.hendelser.pop();
-                    $scope.$apply();
+            function addEventsToEventSource(event) {
+                if ($scope.hendelser === undefined) {
+                    $scope.hendelser = [];
+                    $scope.hendelser.push(event);
+                    $scope.eventSources.push($scope.hendelser);
+                } else {
+                    $scope.hendelser.push(event);
                 }
             }
 
@@ -238,8 +238,7 @@ angular.module('scCalendarController', [])
                     return;
                 }
                 var valgt = $scope.skifttyper.alternativer[$scope.skifttyper.valgt - 1];
-                addEmptyInStart();
-                $scope.hendelser.push({
+                addEventsToEventSource({
                     title: valgt.navn,
                     start: date,
                     startTid: moment(date).add('hours', valgt.startTid),
@@ -278,7 +277,21 @@ angular.module('scCalendarController', [])
                 eventClick: $scope.removeEvent
             };
 
-            $scope.hendelser = [];
-            $scope.eventSources = [$scope.hendelser];
+            var testItem = {
+                "title": "Natt",
+                "start": "2013-09-24T22:00:00.000Z",
+                "startTid": "2013-09-25T19:30:00.000Z",
+                "slutt": "2013-09-26T05:30:00.000Z",
+                "sluttTid": "2013-09-26T05:30:00.000Z",
+                "color": "#000",
+                "__uiCalId": 9,
+                "_id": "_fc2",
+                "_start": "2013-09-24T22:00:00.000Z",
+                "end": null,
+                "_end": null,
+                "allDay": true,
+                "className": []
+            }
+            $scope.eventSources = [];
         }
     ]);
