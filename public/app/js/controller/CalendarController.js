@@ -51,12 +51,15 @@ angular.module('scCalendarController', [])
             function makeApiCall() {
                 // Step 4: Load the Google+ API
                 gapi.client.load('calendar', 'v3', function() {
-                    addGoogleCalendarEvents();
+                    calendarScope.$apply(function() {
+                        addGoogleCalendarEvents();
+                    });
                 });
             }
-            function transformFromGC (items) {
+
+            function transformFromGC(items) {
                 var events = [];
-                _.each(items, function(item){
+                _.each(items, function(item) {
                     var startTime = item.start.dateTime;
                     var endTime = item.end.dateTime;
                     var start = $.fullCalendar.parseISO8601(startTime, true);
@@ -71,16 +74,19 @@ angular.module('scCalendarController', [])
                 });
                 return events;
             }
+
             function addGoogleCalendarEvents() {
                 getCalendar().then(function(calendar) {
                     calendarScope.gcalSource = [];
-                    var req = gapi.client.calendar.events.list({calendarId: calendar.id});
-                    req.execute(function(resp){
+                    var req = gapi.client.calendar.events.list({
+                        calendarId: calendar.id
+                    });
+                    req.execute(function(resp) {
                         calendarScope.gcalSource = transformFromGC(resp.items);
                         calendarScope.eventSources.push(calendarScope.gcalSource);
                         calendarScope.$apply();
                     });
-                    
+
                 });
             }
 
@@ -217,21 +223,31 @@ angular.module('scCalendarController', [])
 
             };
 
+            function addEmptyInStart() {
+                // First event is not hooked up unless we do this..?
+                if ($scope.hendelser.length === 0) {
+                    $scope.hendelser.push({});
+                    $scope.$apply();
+                    $scope.hendelser.pop();
+                    $scope.$apply();
+                }
+            }
+
             $scope.addEvent = function(date, allDay, jsEvent, view) {
-                $scope.$apply(function() {
-                    if ($scope.skifttyper.valgt === 0) {
-                        return;
-                    }
-                    var valgt = $scope.skifttyper.alternativer[$scope.skifttyper.valgt - 1];
-                    $scope.hendelser.push({
-                        title: valgt.navn,
-                        start: date,
-                        startTid: moment(date).add('hours', valgt.startTid),
-                        slutt: moment(date).add('hours', valgt.sluttTid),
-                        sluttTid: moment(date).add('hours', valgt.sluttTid),
-                        color: valgt.farge
-                    });
+                if ($scope.skifttyper.valgt === 0) {
+                    return;
+                }
+                var valgt = $scope.skifttyper.alternativer[$scope.skifttyper.valgt - 1];
+                addEmptyInStart();
+                $scope.hendelser.push({
+                    title: valgt.navn,
+                    start: date,
+                    startTid: moment(date).add('hours', valgt.startTid),
+                    slutt: moment(date).add('hours', valgt.sluttTid),
+                    sluttTid: moment(date).add('hours', valgt.sluttTid),
+                    color: valgt.farge
                 });
+                $scope.$apply();
             };
 
             $scope.removeEvent = function(valgtHendelse, jsEvent, view) {
@@ -263,9 +279,6 @@ angular.module('scCalendarController', [])
             };
 
             $scope.hendelser = [];
-            // $scope.gcalSource = {
-            //     url: "https://www.google.com/calendar/feeds/irontvfhd710k6oips7s5glkt4%40group.calendar.google.com/private-a10f7add274d3ff32f54c870fbbd6be3/basic"
-            // };
             $scope.eventSources = [$scope.hendelser];
         }
     ]);
