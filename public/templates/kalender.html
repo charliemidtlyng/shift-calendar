@@ -9,8 +9,8 @@
     <button type="button" class="btn btn-primary" ng-click="syncWithGoogleCalendar()" ng-show="authorized">Synkroniser</button>
     <button type="button" class="btn btn-primary" ng-click="handleAuthClick()" id="authorize-button" ng-hide="authorized">Logg inn</button>
     <div ng-show="inProgress">Overfører {{inProgress}} hendelse(r)</div>
-
+    <button type="button" class="btn btn-warning" ng-click="deleteCalendar()" ng-show="authorized">Slett kalender</button>
 </div>
 <div class="col-lg-8">
-  <div class="pad-top-50" ui-calendar="kalenderInnstillinger" config="kalenderInnstillinger" ng-model="eventSources" />
+  <div class="pad-top-50" ui-calendar="kalenderInnstillinger" config="kalenderInnstillinger" ng-model="eventSources" calendar="calendar" />
 </div>

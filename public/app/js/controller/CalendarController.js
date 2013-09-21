@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('scCalendarController', [])
-    .factory('$authorizationService', ['$http', '$q',
+    .factory('$googleApiService', ['$http', '$q',
         function($http, $q) {
             var clientId = '821896396854-cfhqjbtc1pg26d0sf50jubdumnhouvo7.apps.googleusercontent.com';
             var apiKey = 'AIzaSyAPpJQ41xhzov5Es5udF1-EcW26bcElT3g';
@@ -62,8 +62,8 @@ angular.module('scCalendarController', [])
                 _.each(items, function(item) {
                     var startTime = item.start.dateTime;
                     var endTime = item.end.dateTime;
-                    var start = $.fullCalendar.parseISO8601(startTime, true);
-                    var end = $.fullCalendar.parseISO8601(endTime, true);
+                    var start = $.fullCalendar.parseISO8601(startTime, false);
+                    var end = $.fullCalendar.parseISO8601(endTime, false);
                     events.push({
                         id: item.iCalUID,
                         title: item.summary,
@@ -90,9 +90,30 @@ angular.module('scCalendarController', [])
                 });
             }
 
-            // Google calendar specific
+            function moveFromLocalToGcalSource(gcalResponses) {
+                calendarScope.$apply(function() {
+                    _.each(transformFromGC(gcalResponses), function(gcalResponse) {
+                        calendarScope.gcalSource.push(gcalResponse);
+                    });
+                });
+                calendarScope.$apply(function() {
+                    var index = _.indexOf(calendarScope.eventSources, calendarScope.hendelser);
+                    calendarScope.eventSources.splice(index, 1);
+
+                });
+                calendarScope.$apply(function() {
+                    calendarScope.hendelser.splice(0, calendarScope.hendelser.length);
+                    calendarScope.hendelser = undefined;
+                    calendarScope.calendar.fullCalendar('next');
+                    calendarScope.calendar.fullCalendar('prev');
+                });
+
+
+            }
 
             function syncEvents(calendar) {
+                var numberOfEvents = 0,
+                    responses = [];
                 var calendarId = calendar.id;
                 calendarScope.inProgress = calendarScope.hendelser ? calendarScope.hendelser.length : 0;
                 _.each(calendarScope.hendelser, function(hendelse) {
@@ -109,7 +130,14 @@ angular.module('scCalendarController', [])
                         }
                     });
                     request.execute(function(response) {
+                        responses.push(response);
+                        numberOfEvents++;
+                        if (numberOfEvents === calendarScope.hendelser.length) {
+                            moveFromLocalToGcalSource(responses);
+                        }
                         calendarScope.inProgress = calendarScope.inProgress - 1;
+                        // Remove event from hendelser 
+                        // Add event to local GCalScope
                         calendarScope.$apply();
                     });
                 });
@@ -168,6 +196,17 @@ angular.module('scCalendarController', [])
                 getCalendar().then(syncEvents);
             }
 
+            function deleteCalendar() {
+                getCalendar().then(function(calendar) {
+                    var request = gapi.client.calendar.calendars.delete({
+                        calendarId: calendar.id
+                    });
+                    request.execute(function(response) {
+                        location.reload();
+                    });
+                });
+            }
+
             return {
                 authorize: function(scope) {
                     calendarScope = scope;
@@ -180,17 +219,20 @@ angular.module('scCalendarController', [])
                 syncWithGoogleCalendar: function(scope) {
                     calendarScope = scope;
                     syncWithGoogleCalendar();
+                },
+                deleteCalendar: function() {
+                    deleteCalendar();
                 }
             };
 
         }
     ])
-    .controller('CalendarController', ['$scope', '$authorizationService',
-        function($scope, authorizationService) {
-            authorizationService.authorize($scope);
+    .controller('CalendarController', ['$scope', '$googleApiService',
+        function($scope, googleApiService) {
+            googleApiService.authorize($scope);
 
             $scope.handleAuthClick = function() {
-                authorizationService.handleAuthClick($scope);
+                googleApiService.handleAuthClick($scope);
             };
 
             $scope.skifttyper = {
@@ -200,7 +242,7 @@ angular.module('scCalendarController', [])
                     navn: "Fri",
                     farge: "#CCC",
                     startTid: '0',
-                    sluttTid: '23:59'
+                    sluttTid: '0'
                 }, {
                     id: 2,
                     navn: "Dag",
@@ -260,7 +302,11 @@ angular.module('scCalendarController', [])
             };
 
             $scope.syncWithGoogleCalendar = function() {
-                authorizationService.syncWithGoogleCalendar($scope);
+                googleApiService.syncWithGoogleCalendar($scope);
+            };
+
+            $scope.deleteCalendar = function() {
+                googleApiService.deleteCalendar();
             };
 
             $scope.kalenderInnstillinger = {
