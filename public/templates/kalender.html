@@ -6,11 +6,29 @@
 </div>
 <div class="col-lg-6">
   <h2>Overfør til Google Calendar</h2>
-    <button type="button" class="btn btn-primary" ng-click="syncWithGoogleCalendar()" ng-show="authorized">Synkroniser</button>
+    <button type="button" class="btn btn-primary" ng-click="syncWithGoogleCalendar()" ng-show="authorized" ng-disabled="inProgress">Synkroniser</button>
     <button type="button" class="btn btn-primary" ng-click="handleAuthClick()" id="authorize-button" ng-hide="authorized">Logg inn</button>
+    <a data-toggle="modal" href="#confirmDelete" class="btn btn-warning" ng-show="authorized" ng-disabled="inProgress">Slett kalender</a>
     <div ng-show="inProgress">Overfører {{inProgress}} hendelse(r)</div>
-    <button type="button" class="btn btn-warning" ng-click="deleteCalendar()" ng-show="authorized">Slett kalender</button>
+
 </div>
 <div class="col-lg-8">
   <div class="pad-top-50" ui-calendar="kalenderInnstillinger" config="kalenderInnstillinger" ng-model="eventSources" calendar="calendar" />
 </div>
+<div class="modal fade" id="confirmDelete">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Obs!</h4>
+      </div>
+      <div class="modal-body">
+        <p>Er du sikker på at du vil slette kalenderen din? Dette vil fjerne alle vakt-innslagene i Google Calendar</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
+        <button type="button" class="btn btn-warning" ng-click="deleteCalendar()">Slett</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

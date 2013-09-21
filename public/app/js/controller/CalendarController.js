@@ -276,7 +276,7 @@ angular.module('scCalendarController', [])
             }
 
             $scope.addEvent = function(date, allDay, jsEvent, view) {
-                if ($scope.skifttyper.valgt === 0) {
+                if ($scope.skifttyper.valgt === 0 || $scope.inProgress) {
                     return;
                 }
                 var valgt = $scope.skifttyper.alternativer[$scope.skifttyper.valgt - 1];
