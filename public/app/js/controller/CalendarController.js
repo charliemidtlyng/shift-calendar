@@ -128,8 +128,7 @@ angular.module('scCalendarController', [])
                             end: {
                                 date: moment(hendelse.slutt).format('YYYY-MM-DD')
                             },
-                            colorId: hendelse.colorId,
-                            transparancy: "transparent"
+                            colorId: hendelse.colorId
                         }
                     });
                     var executeRequest = function() {
