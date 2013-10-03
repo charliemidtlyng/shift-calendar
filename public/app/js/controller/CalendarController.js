@@ -278,13 +278,13 @@ angular.module('scCalendarController', [])
                 }, {
                     id: 3,
                     navn: "Aften",
-                    farge: "#5484ed",
-                    colorId: 9
+                    farge: "#a4bdfc",
+                    colorId: 1
                 }, {
                     id: 4,
                     navn: "Natt",
-                    farge: "#dc2127",
-                    colorId: 11
+                    farge: "#ff887c",
+                    colorId: 4
                 }]
 
             };
@@ -333,6 +333,23 @@ angular.module('scCalendarController', [])
 
             $scope.deleteCalendar = function() {
                 googleApiService.deleteCalendar();
+            };
+
+            $scope.keyPressed = function(e) {
+                switch (e.which) {
+                    case 49:
+                        $scope.skifttyper.valgt = 1;
+                        break;
+                    case 50:
+                        $scope.skifttyper.valgt = 2;
+                        break;
+                    case 51:
+                        $scope.skifttyper.valgt = 3;
+                        break;
+                    case 52:
+                        $scope.skifttyper.valgt = 4;
+                        break;
+                }
             };
 
             $scope.kalenderInnstillinger = {

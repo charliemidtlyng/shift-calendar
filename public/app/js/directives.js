@@ -26,6 +26,18 @@ angular.module('scDirectives', [])
         return directiveDefinitionObject;
 
     })
+    .directive('shortcut', function() {
+      return {
+        restrict: 'E',
+        replace: true,
+        scope: true,
+        link:    function postLink(scope, iElement, iAttrs){
+          jQuery(document).on('keypress', function(e){
+             scope.$apply(scope.keyPressed(e));
+           });
+        }
+      };
+    })
     .directive('activeTab', ['$location', function(location) {
         return {
             restrict: 'AC',

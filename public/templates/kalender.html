@@ -1,5 +1,7 @@
+<shortcut />
 <div class="col-lg-6">
   <h2>Velg type her:</h2>
+  <h6>(PS: Hurtigtaster: 1-4 på tastaturet)</h6>
   <div class="btn-group">
     <button data-ng-repeat="skifttype in skifttyper.alternativer" type="button" class="btn btn-default" ng-click="skifttyper.valgt=skifttype.id" ng-class="{active:skifttype.id==skifttyper.valgt}">{{skifttype.navn}}</button>
   </div>
