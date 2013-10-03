@@ -24,8 +24,6 @@ angular.module('scCalendarController', [])
 
             function handleAuthResult(authResult) {
                 if (authResult && !authResult.error) {
-                    // authorizeButton.style.visibility = 'hidden';
-                    //TODO Set scope value
                     calendarScope.authorized = true;
                     calendarScope.$apply();
                     makeApiCall();
@@ -62,8 +60,8 @@ angular.module('scCalendarController', [])
             function transformFromGC(items) {
                 var events = [];
                 _.each(items, function(item) {
-                    var startTime = item.start.dateTime;
-                    var endTime = item.end.dateTime;
+                    var startTime = item.start.date;
+                    var endTime = item.end.date;
                     var start = $.fullCalendar.parseISO8601(startTime, false);
                     var end = $.fullCalendar.parseISO8601(endTime, false);
                     events.push({
@@ -125,11 +123,13 @@ angular.module('scCalendarController', [])
                         resource: {
                             summary: hendelse.title,
                             start: {
-                                dateTime: moment(hendelse.startTid).format('YYYY-MM-DDTHH:mm:ssZ')
+                                date: moment(hendelse.start).format('YYYY-MM-DD')
                             },
                             end: {
-                                dateTime: moment(hendelse.sluttTid).format('YYYY-MM-DDTHH:mm:ssZ')
-                            }
+                                date: moment(hendelse.slutt).format('YYYY-MM-DD')
+                            },
+                            colorId: hendelse.colorId,
+                            transparancy: "transparent"
                         }
                     });
                     var executeRequest = function() {
@@ -269,27 +269,23 @@ angular.module('scCalendarController', [])
                 alternativer: [{
                     id: 1,
                     navn: "Fri",
-                    farge: "#CCC",
-                    startTid: '0',
-                    sluttTid: '0'
+                    farge: "#51b749",
+                    colorId: 10
                 }, {
                     id: 2,
                     navn: "Dag",
-                    farge: "#33CC33",
-                    startTid: '07.5',
-                    sluttTid: '15.5'
+                    farge: "#ffb878",
+                    colorId: 6
                 }, {
                     id: 3,
                     navn: "Aften",
-                    farge: "#0099FF",
-                    startTid: '15.5',
-                    sluttTid: '22'
+                    farge: "#5484ed",
+                    colorId: 9
                 }, {
                     id: 4,
                     navn: "Natt",
-                    farge: "#000",
-                    startTid: '21.5',
-                    sluttTid: '31.5'
+                    farge: "#dc2127",
+                    colorId: 11
                 }]
 
             };
@@ -313,10 +309,9 @@ angular.module('scCalendarController', [])
                     addEventsToEventSource({
                         title: valgt.navn,
                         start: date,
-                        startTid: moment(date).add('hours', valgt.startTid),
-                        slutt: moment(date).add('hours', valgt.sluttTid),
-                        sluttTid: moment(date).add('hours', valgt.sluttTid),
-                        color: valgt.farge
+                        slutt: date,
+                        color: valgt.farge,
+                        colorId: valgt.colorId
                     });
                 });
                 $scope.calendar.fullCalendar('removeEvents').fullCalendar('addEventSource', $scope.hendelser).fullCalendar('addEventSource', $scope.gcalSource);
@@ -355,21 +350,6 @@ angular.module('scCalendarController', [])
                 eventClick: $scope.removeEvent
             };
 
-            var testItem = {
-                "title": "Natt",
-                "start": "2013-09-24T22:00:00.000Z",
-                "startTid": "2013-09-25T19:30:00.000Z",
-                "slutt": "2013-09-26T05:30:00.000Z",
-                "sluttTid": "2013-09-26T05:30:00.000Z",
-                "color": "#000",
-                "__uiCalId": 9,
-                "_id": "_fc2",
-                "_start": "2013-09-24T22:00:00.000Z",
-                "end": null,
-                "_end": null,
-                "allDay": true,
-                "className": []
-            }
             $scope.eventSources = [];
         }
     ]);
