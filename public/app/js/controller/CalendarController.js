@@ -139,7 +139,7 @@ angular.module('scCalendarController', [])
                                 moveFromLocalToGcalSource(responses);
                             }
                             calendarScope.inProgress = calendarScope.inProgress - 1;
-                            // Remove event from hendelser 
+                            // Remove event from hendelser
                             // Add event to local GCalScope
                             calendarScope.$apply();
                         });
@@ -282,7 +282,7 @@ angular.module('scCalendarController', [])
                     colorId: 1
                 }, {
                     id: 4,
-                    navn: "Natt",
+                    navn: "<- Natt",
                     farge: "#ff887c",
                     colorId: 4
                 }]
