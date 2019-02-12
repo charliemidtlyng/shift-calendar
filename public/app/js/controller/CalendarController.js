@@ -147,7 +147,7 @@ angular.module('scCalendarController', [])
 
                     // Create waitLoop in order to not spam Google Api
                     var waitLoop = function() {
-                        if (index - responses.length > 5) {
+                        if (index - responses.length > 3) {
                             console.log("waiting with");
                             console.log(hendelse);
                             setTimeout(waitLoop, 1000);
